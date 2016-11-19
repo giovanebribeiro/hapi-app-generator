@@ -1,0 +1,29 @@
+{
+  "$meta":{
+    "description": "This is the manifest of your application. Here, all your modules will be registered and your server configurations. Some configurations will be put on server.js file."
+  },
+  "connections":[
+    {
+      "routes":{
+        "cors": true
+      },
+      "labels": ["app"]
+    }
+  ],
+  "registrations": [
+    {
+      "plugin": {
+        "register": "good",
+        "options": {
+          "ops": {
+            "interval": 5000
+          },
+          "reporters":{
+            "console": [ { "module": "good-console" }, "stdout" ]
+          }
+        }
+      }
+    },
+    { "plugin": { "register": "./hello" } }
+  ]
+}

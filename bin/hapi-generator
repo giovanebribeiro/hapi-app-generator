@@ -1,0 +1,48 @@
+#!/usr/bin/env node
+
+var async = require("async");
+var mkdirp = require("mkdirp");
+
+if(process.argv.length <= 2){
+  console.log("Invalid project name. Usage: hapi-generator <project_name> ");
+}
+
+var projectName = process.argv[2];
+
+console.log("*** Init process");
+
+console.log("* Mount package.json");
+var pkgJson = {
+  "name": projectName,
+  "version": "1.0.0",
+  "description": "A generator for hapi.js 'skeleton' applications, KISS style.",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV=test lab -M 20000 -v -r console -o stdout -r html -o test/testResults.html --leaks test",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "hapi",
+    "application",
+    "js"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "boom": "^4.2.0",
+    "confidence": "^3.0.2",
+    "debug": "^2.3.2",
+    "glue": "^4.0.0",
+    "good": "^7.0.2",
+    "good-console": "^6.3.1",
+    "hapi": "^15.2.0"
+  },
+  "devDependencies": {
+    "blipp": "^2.3.0",
+    "code": "^4.0.0",
+    "jshint": "^2.9.4",
+    "lab": "^11.2.1"
+  }
+};
+
+console.log("* Copying the skeleton files");

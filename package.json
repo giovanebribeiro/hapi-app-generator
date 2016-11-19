@@ -1,0 +1,39 @@
+{
+  "name": "hapi-app-generator",
+  "version": "0.0.0",
+  "description": "Another Hapi.JS generator",
+  "main": "bin/hapi-generator",
+  "bin": {
+    "hapigen": "./bin/hapi-generator"
+  },
+  "scripts": {
+    "pretest": "jshint bin test",
+    "test": "mocha --bail test/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:giovanebribeiro/hapi-generator.git"
+  },
+  "preferGlobal": true,
+  "keywords": [
+    "hapi",
+    "application",
+    "generator",
+    "nodejs"
+  ],
+  "author": "Giovane Boaviagem Ribeiro (http://about.me/giovanebribeiro)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/giovanebribeiro/hapi-generator/issues"
+  },
+  "homepage": "https://github.com/giovanebribeiro/hapi-generator#readme",
+  "dependencies": {
+    "async": "^2.1.2",
+    "mkdirp": "^0.5.1"
+  },
+  "devDependencies": {
+    "conventional-changelog-cli": "^1.2.0",
+    "jshint": "^2.9.4",
+    "mocha": "^3.1.2"
+  }
+}
