@@ -2,47 +2,155 @@
 
 var async = require("async");
 var mkdirp = require("mkdirp");
+var path = require("path");
+var fs = require("fs");
+var Getopts = require("node-getopt");
 
-if(process.argv.length <= 2){
-  console.log("Invalid project name. Usage: hapi-generator <project_name> ");
+var getopts = new Getopts([
+  ['g', 'git', 'Add .gitignore'],
+  ['h', 'help', 'Display this help'],
+  ['v', 'version', 'Show the version']
+]);
+
+getopts.setHelp(
+  "Usage: hapigen [OPTION] <projectName>\n" +
+  "\n" +
+  "[[OPTIONS]]\n" +
+  "\n" +
+  "<projectName> is the path to project folder"
+  );
+//console.log(opt.argv[0]);
+//return 0;
+
+var opt = getopts.parseSystem();
+
+if(opt.options.version){
+  var pkg = require("../package.json");
+  console.log(pkg.version);
+  return 0;
 }
 
-var projectName = process.argv[2];
+// get the project name
+if(opt.argv.length === 0){
+  console.log("Invalid project name.");
+  console.log(getopts.getHelp());
+  return 1;
+}
+
+var projectName = opt.argv[0];
 
 console.log("*** Init process");
 
-console.log("* Mount package.json");
-var pkgJson = {
-  "name": projectName,
-  "version": "1.0.0",
-  "description": "A generator for hapi.js 'skeleton' applications, KISS style.",
-  "main": "index.js",
-  "scripts": {
-    "test": "NODE_ENV=test lab -M 20000 -v -r console -o stdout -r html -o test/testResults.html --leaks test",
-    "start": "node index.js"
-  },
-  "keywords": [
-    "hapi",
-    "application",
-    "js"
-  ],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "boom": "^4.2.0",
-    "confidence": "^3.0.2",
-    "debug": "^2.3.2",
-    "glue": "^4.0.0",
-    "good": "^7.0.2",
-    "good-console": "^6.3.1",
-    "hapi": "^15.2.0"
-  },
-  "devDependencies": {
-    "blipp": "^2.3.0",
-    "code": "^4.0.0",
-    "jshint": "^2.9.4",
-    "lab": "^11.2.1"
-  }
+// mount root folder
+var createRootLevel = function(callback){
+  var readmeMd = fs.readFileSync(path.join(__dirname, "..", "templates", "md", "README.md"), 'utf-8');
+  var indexJs = fs.readFileSync(path.join(__dirname, "..", "templates", "js", "index.js"), 'utf-8');
+  var gitignore = fs.readFileSync(path.join(__dirname, "..", "templates", "gitignore"), 'utf-8');
+  var finalPackageJson = path.join(projectName, "package.json");
+  var finalReadmeMd = path.join(projectName, "README.md");
+  var finalIndexJs = path.join(projectName, "index.js");
+  var finalGitignore = path.join(projectName, ".gitignore");
+
+  console.log("* Create project folder");
+  mkdirp(projectName, 0755, function(err){
+    if(err){ throw err; }
+
+    // README.md
+    readmeMd = readmeMd.replace(/%projectName%/g, projectName);
+    fs.writeFileSync(finalReadmeMd, readmeMd);
+
+    // index.js
+    fs.writeFileSync(finalIndexJs, indexJs);
+
+    // gitignore
+    if(opt.options.git){
+      fs.writeFileSync(finalGitignore, gitignore);
+    }
+
+    // package.json
+    var pkgJson = {
+      "name": projectName,
+      "version": "1.0.0",
+      "main": "index.js",
+      "scripts": {
+        "test": "NODE_ENV=test lab -M 20000 -v -r console -o stdout -r html -o test/testResults.html --leaks test",
+        "start": "node index.js"
+      },
+      "keywords": [
+        "hapi",
+        "application",
+        "js"
+      ],
+      "author": "",
+      "license": "ISC",
+      "dependencies": {
+        "boom": "^4.2.0",
+        "confidence": "^3.0.2",
+        "debug": "^2.3.2",
+        "glue": "^4.0.0",
+        "good": "^7.0.2",
+        "good-console": "^6.3.1",
+        "hapi": "^15.2.0"
+      },
+      "devDependencies": {
+        "blipp": "^2.3.0",
+        "code": "^4.0.0",
+        "jshint": "^2.9.4",
+        "lab": "^11.2.1"
+      } 
+    };
+    fs.writeFileSync(finalPackageJson, JSON.stringify(pkgJson, null, 2));
+
+    callback();
+  });
 };
 
-console.log("* Copying the skeleton files");
+var createSrcLevel = function(callback){
+  var moduleHelloActionJs = fs.readFileSync(path.join(__dirname, "..", "templates", "js", "hello.action.js"), 'utf-8');
+  var moduleHelloPluginJs = fs.readFileSync(path.join(__dirname, "..", "templates", "js", "hello.plugin.js"), 'utf-8');
+  var manifestJson = fs.readFileSync(path.join(__dirname, "..", "templates", "json", "manifest.json"), 'utf-8');
+  var finalSrcStructure = path.join(projectName, "src", "modules", "hello", "actions");
+  var finalManifestJson = path.join(projectName, "src", "manifest.json");
+  var finalModuleHelloPluginJs = path.join(projectName, "src", "modules", "hello", "index.js");
+  var finalModuleHelloActionJs = path.join(finalSrcStructure, "hello.js");
+  
+  mkdirp(finalSrcStructure, 0755, function(err){
+    if(err){ throw err; }
+
+    //manifest.json
+    fs.writeFileSync(finalManifestJson, manifestJson);
+
+    // hello module: index.js
+    fs.writeFileSync(finalModuleHelloPluginJs, moduleHelloPluginJs);
+
+    // hello module: action hello
+    fs.writeFileSync(finalModuleHelloActionJs, moduleHelloActionJs);
+    
+    callback();
+  });
+};
+
+  var testHelloJs = fs.readFileSync(path.join(__dirname, "..", "templates", "js", "hello.test.js"), 'utf-8');
+// main execution
+async.series([
+    createRootLevel,
+    createSrcLevel
+], function(err){
+  if(err){ throw err; }
+  console.log("*** Process finished successfully. To run the project, execute the commands:");
+  console.log("*** ")
+  console.log("*** $ npm install");
+  console.log("*** $ npm start");
+  console.log("***");
+  console.log("*** This project have the 'debug' module. To activate:");
+  console.log("***");
+  console.log("*** $ DEBUG="+projectName+":* npm start");
+  return 0;
+});
+
+/*
+ * Final project structure
+ */
+var srcStructure = path.join(projectName, "src", "modules", "hello", "actions");
+var testStructure = path.join(projectName, "test");
+

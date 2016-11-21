@@ -29,10 +29,10 @@
   "homepage": "https://github.com/giovanebribeiro/hapi-generator#readme",
   "dependencies": {
     "async": "^2.1.2",
-    "mkdirp": "^0.5.1"
+    "mkdirp": "^0.5.1",
+    "node-getopt": "^0.2.3"
   },
   "devDependencies": {
-    "conventional-changelog-cli": "^1.2.0",
     "jshint": "^2.9.4",
     "mocha": "^3.1.2"
   }
