@@ -130,11 +130,26 @@ var createSrcLevel = function(callback){
   });
 };
 
+var createTestLevel = function(callback){
   var testHelloJs = fs.readFileSync(path.join(__dirname, "..", "templates", "js", "hello.test.js"), 'utf-8');
+  var finalTestStructure = path.join(projectName, "test");
+  var finalTestHelloJs = path.join(finalTestStructure, "hello.test.js");
+
+  mkdirp(finalTestStructure, 0755, function(err){
+    if(err){ throw err; }
+
+    // test file
+    fs.writeFileSync(finalTestHelloJs, testHelloJs);
+
+    callback();
+  });
+};
+
 // main execution
 async.series([
     createRootLevel,
-    createSrcLevel
+    createSrcLevel,
+    createTestLevel
 ], function(err){
   if(err){ throw err; }
   console.log("*** Process finished successfully. To run the project, execute the commands:");
@@ -147,10 +162,3 @@ async.series([
   console.log("*** $ DEBUG="+projectName+":* npm start");
   return 0;
 });
-
-/*
- * Final project structure
- */
-var srcStructure = path.join(projectName, "src", "modules", "hello", "actions");
-var testStructure = path.join(projectName, "test");
-
