@@ -13,11 +13,11 @@ var getopts = new Getopts([
 ]);
 
 getopts.setHelp(
-  "Usage: hapigen [OPTION] <projectName>\n" +
+  "Usage: hapigen [OPTION] <projectPath>\n" +
   "\n" +
   "[[OPTIONS]]\n" +
   "\n" +
-  "<projectName> is the path to project folder"
+  "<projectPath> is the path to project folder"
   );
 //console.log(opt.argv[0]);
 //return 0;
