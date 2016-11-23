@@ -37,7 +37,14 @@ if(opt.argv.length === 0){
   return 1;
 }
 
-var projectName = opt.argv[0];
+var projectPath = opt.argv[0];
+var projectName = projectPath;
+var temp = projectPath.split(/[\/\\]/);
+if(temp.length === 1){
+  projectName = projectPath;
+}else{
+  projectName = temp[temp.length-1];
+}
 
 console.log("*** Init process");
 
@@ -47,14 +54,14 @@ var createRootLevel = function(callback){
   var indexJs = fs.readFileSync(path.join(__dirname, "..", "templates", "js", "index.js"), 'utf-8');
   var gitignore = fs.readFileSync(path.join(__dirname, "..", "templates", "gitignore"), 'utf-8');
   var eslint = fs.readFileSync(path.join(__dirname, "..", "templates", "eslintrc"), "utf-8");
-  var finalPackageJson = path.join(projectName, "package.json");
-  var finalReadmeMd = path.join(projectName, "README.md");
-  var finalIndexJs = path.join(projectName, "index.js");
-  var finalGitignore = path.join(projectName, ".gitignore");
-  var finalEslint = path.join(projectName, ".eslintrc");
+  var finalPackageJson = path.join(projectPath, "package.json");
+  var finalReadmeMd = path.join(projectPath, "README.md");
+  var finalIndexJs = path.join(projectPath, "index.js");
+  var finalGitignore = path.join(projectPath, ".gitignore");
+  var finalEslint = path.join(projectPath, ".eslintrc");
 
   console.log("* Create project folder");
-  mkdirp(projectName, 0755, function(err){
+  mkdirp(projectPath, 0755, function(err){
     if(err){ throw err; }
 
     // README.md
@@ -120,9 +127,9 @@ var createSrcLevel = function(callback){
   var moduleHelloActionJs = fs.readFileSync(path.join(__dirname, "..", "templates", "js", "hello.action.js"), 'utf-8');
   var moduleHelloPluginJs = fs.readFileSync(path.join(__dirname, "..", "templates", "js", "hello.plugin.js"), 'utf-8');
   var manifestJson = fs.readFileSync(path.join(__dirname, "..", "templates", "json", "manifest.json"), 'utf-8');
-  var finalSrcStructure = path.join(projectName, "src", "modules", "hello", "actions");
-  var finalManifestJson = path.join(projectName, "src", "manifest.json");
-  var finalModuleHelloPluginJs = path.join(projectName, "src", "modules", "hello", "index.js");
+  var finalSrcStructure = path.join(projectPath, "src", "modules", "hello", "actions");
+  var finalManifestJson = path.join(projectPath, "src", "manifest.json");
+  var finalModuleHelloPluginJs = path.join(projectPath, "src", "modules", "hello", "index.js");
   var finalModuleHelloActionJs = path.join(finalSrcStructure, "hello.js");
  
   console.log("* Create 'src' folder structure");
@@ -147,7 +154,7 @@ var createSrcLevel = function(callback){
 
 var createTestLevel = function(callback){
   var testHelloJs = fs.readFileSync(path.join(__dirname, "..", "templates", "js", "hello.test.js"), 'utf-8');
-  var finalTestStructure = path.join(projectName, "test");
+  var finalTestStructure = path.join(projectPath, "test");
   var finalTestHelloJs = path.join(finalTestStructure, "hello.test.js");
 
 

@@ -3,7 +3,7 @@ Another [Hapi.js](http://hapijs.com/) app generator, with tests and modular stru
 
 ## Installation
 ```
-# npm install -g hapi-app-generator
+# npm install -g hapi-generator
 ```
 
 ## Options
@@ -19,7 +19,7 @@ Usage: hapigen [OPTION] <projectName>
 
 Expected result:
 ```
-$ ./hapi-app-generator/bin/hapi-generator foo
+$ hapigen foo
 *** Init process
 * Create project folder
 * Copy README.md

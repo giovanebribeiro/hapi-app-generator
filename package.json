@@ -1,5 +1,5 @@
 {
-  "name": "hapi-app-generator",
+  "name": "hapi-generator",
   "version": "0.0.0",
   "description": "Another Hapi.JS generator",
   "main": "bin/hapi-generator",
@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "eslint": "^3.10.2",
+    "eslint-plugin-json": "^1.2.0",
     "mocha": "^3.1.2"
   }
 }
