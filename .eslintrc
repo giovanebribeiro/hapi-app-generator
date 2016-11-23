@@ -1,10 +1,12 @@
 {
   "plugins": [
+    "mocha",
     "json"
   ],
   "env": {
         "es6": true,
-        "node": true
+        "node": true,
+        "mocha": true
     
   },
     "extends": "eslint:recommended",
@@ -31,7 +33,8 @@
             "error",
             "always"
         
-      ]
+      ],
+      "mocha/no-exclusive-tests": "error"
     
     }
 }
