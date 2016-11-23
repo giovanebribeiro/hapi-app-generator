@@ -7,7 +7,7 @@
     "hapigen": "./bin/hapi-generator"
   },
   "scripts": {
-    "pretest": "jshint bin test",
+    "pretest": "eslint bin test",
     "test": "mocha --bail test/"
   },
   "repository": {
@@ -33,7 +33,7 @@
     "node-getopt": "^0.2.3"
   },
   "devDependencies": {
-    "jshint": "^2.9.4",
+    "eslint": "^3.10.2",
     "mocha": "^3.1.2"
   }
 }

@@ -16,3 +16,32 @@ Usage: hapigen [OPTION] <projectName>
 
 <projectName> is the path to project folder
 ```
+
+Expected result:
+```
+$ ./hapi-app-generator/bin/hapi-generator foo
+*** Init process
+* Create project folder
+* Copy README.md
+* Copy index.js
+* Copy .eslintrc
+* Create package.json
+* Create 'src' folder structure
+* Copy src/manifest.json
+* Copy src/modules/hello/index.js
+* Copy src/modules/hello/actions/hello.js
+* Create 'test' folder
+* Copy test/hello.test.js
+*** Process finished successfully. To run the project, execute the commands:
+***
+*** $ npm install
+*** $ npm start
+***
+*** This project have the 'debug' module. To activate:
+***
+*** $ DEBUG=foo:* npm start
+***
+*** This project also have tests (with eslint). To run:
+***
+*** $ npm test
+```
