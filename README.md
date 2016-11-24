@@ -1,4 +1,4 @@
-# hapi-generator
+# hapi-generator [![Build Status](https://travis-ci.org/giovanebribeiro/hapi-app-generator.svg?branch=master)](https://travis-ci.org/giovanebribeiro/hapi-app-generator)
 Another [Hapi.js](http://hapijs.com/) app generator (command line), with tests, [ESLint](http://eslint.org/) support and modular structure.
 
 ## Installation
