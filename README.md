@@ -1,5 +1,5 @@
 # hapi-generator
-Another [Hapi.js](http://hapijs.com/) app generator, with tests, [ESLint](http://eslint.org/) support and modular structure.
+Another [Hapi.js](http://hapijs.com/) app generator (command line), with tests, [ESLint](http://eslint.org/) support and modular structure.
 
 ## Installation
 ```

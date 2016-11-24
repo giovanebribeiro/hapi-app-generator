@@ -9,6 +9,8 @@
   "scripts": {
     "pretest": "eslint bin",
     "test": "mocha --bail test/"
+    "preversion": "npm test",
+    "version": "git add --all && git push && git push --tags"
   },
   "repository": {
     "type": "git",
