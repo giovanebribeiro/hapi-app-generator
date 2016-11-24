@@ -6,6 +6,7 @@ var path = require("path");
 var fs = require("fs");
 var Getopts = require("node-getopt");
 var validate = require('validate-npm-package-name');
+var debug = require('debug')('hapi-app-generator:bin/hapi-generator');
 
 var getopts = new Getopts([
   ['g', 'git', 'Add .gitignore'],
@@ -91,18 +92,19 @@ var createRootLevel = function(callback){
 
   async.series([
       function(cb){
+        console.log("* Check if folder is available");
         fs.access(projectPath, fs.F_OK, function(err){
             if(err){
-                // project folder not exists. we can continue.
+                debug("project folder not exists, we can continue");
                 return cb(null);
             }
 
             if(opt.options.force){
-                // project folder exists, but the user still wants to use this folder... OKAY! :D
+                debug("project folder exists, but the user still wants to use this folder... OKAY! :D");
                 return cb(null);
             }
 
-            // project folder exists, and the user not want to use the 'force' option.
+            debug("project folder exists, and the user not want to use the 'force' option.");
             err = new Error("fs.access.error");
             return cb(err);
         });
@@ -167,12 +169,14 @@ var createRootLevel = function(callback){
               } 
             };
             fs.writeFileSync(finalPackageJson, JSON.stringify(pkgJson, null, 2));
+            return cb(null);
           });
       }
   ], function(err, result){
     if(err){
+      debug("Error object:", JSON.stringify(err));
       if(err.message === "fs.access.error"){
-          console.log("Directory already exists. If you still want to use this directory, invoke the \'-f\' option.");
+          console.log("+ Directory already exists. If you still want to use this directory, invoke the \'-f\' option.");
           return callback(err);
       }
     }
@@ -193,7 +197,11 @@ var createSrcLevel = function(callback){
  
   console.log("* Create 'src' folder structure");
   mkdirp(finalSrcStructure, 0755, function(err){
-    if(err){ throw err; }
+    if(err){ 
+        var aux = err.message;
+        err.message = "mkdirp.error - "+aux;
+        return callback(error);
+    }
 
     //manifest.json
     console.log("* Copy src/manifest.json");
@@ -207,7 +215,7 @@ var createSrcLevel = function(callback){
     console.log("* Copy src/modules/hello/actions/hello.js");
     fs.writeFileSync(finalModuleHelloActionJs, moduleHelloActionJs);
     
-    callback();
+    callback(null);
   });
 };
 
@@ -216,16 +224,19 @@ var createTestLevel = function(callback){
   var finalTestStructure = path.join(projectPath, "test");
   var finalTestHelloJs = path.join(finalTestStructure, "hello.test.js");
 
-
   console.log("* Create 'test' folder");
   mkdirp(finalTestStructure, 0755, function(err){
-    if(err){ throw err; }
+    if(err){ 
+      var aux = err.message;
+      err.message = "mkdirp.error - "+aux;
+      return callback(err);
+    }
 
     // test file
     console.log("* Copy test/hello.test.js");
     fs.writeFileSync(finalTestHelloJs, testHelloJs);
 
-    callback();
+    callback(null);
   });
 };
 
@@ -238,18 +249,19 @@ async.series([
   if(err){ 
       return 1;
   }
-  console.log("*** Process finished successfully. To run the project, execute the commands:");
-  console.log("*** ")
-  console.log("*** $ npm install");
-  console.log("*** $ npm start");
-  console.log("***");
-  console.log("*** This project have the 'debug' module. To activate:");
-  console.log("***");
-  console.log("*** $ DEBUG="+projectName+":* npm start");
-  console.log("***");
-  console.log("*** This project also have tests (with eslint). To run:");
-  console.log("***");
-  console.log("*** $ npm test");
+  console.log("Process finished successfully. To run the project, execute the commands:");
+  console.log("");
+  console.log("$ cd "+projectName);
+  console.log("$ npm install");
+  console.log("$ npm start");
+  console.log("");
+  console.log("This project have the 'debug' module. To activate:");
+  console.log("");
+  console.log("$ DEBUG="+projectName+":* npm start");
+  console.log("");
+  console.log("This project also have tests (with eslint). To run:");
+  console.log("");
+  console.log("$ npm test");
 
   return 0;
 });
