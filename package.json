@@ -10,7 +10,8 @@
     "pretest": "eslint bin",
     "test": "mocha --bail test/",
     "preversion": "npm test",
-    "version": "git add --all && git push && git push --tags"
+    "version": "git add --all && git push origin master && git push origin master --tags",
+    "postversion": "npm publish"
   },
   "repository": {
     "type": "git",
