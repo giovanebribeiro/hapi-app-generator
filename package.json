@@ -27,9 +27,9 @@
   "author": "Giovane Boaviagem Ribeiro (http://about.me/giovanebribeiro)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/giovanebribeiro/hapi-generator/issues"
+    "url": "https://github.com/giovanebribeiro/hapi-app-generator/issues"
   },
-  "homepage": "https://github.com/giovanebribeiro/hapi-generator#readme",
+  "homepage": "https://github.com/giovanebribeiro/hapi-app-generator#readme",
   "dependencies": {
     "async": "^2.1.2",
     "debug": "^2.3.3",
