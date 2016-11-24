@@ -5,11 +5,13 @@ var mkdirp = require("mkdirp");
 var path = require("path");
 var fs = require("fs");
 var Getopts = require("node-getopt");
+var validate = require('validate-npm-package-name');
 
 var getopts = new Getopts([
   ['g', 'git', 'Add .gitignore'],
   ['h', 'help', 'Display this help'],
-  ['v', 'version', 'Show the version']
+  ['v', 'version', 'Show the version'],
+  ['f', 'force', 'Force the execution, even if project name are not recommended, or project folder is non-empty']
 ]);
 
 getopts.setHelp(
@@ -27,14 +29,21 @@ var opt = getopts.parseSystem();
 if(opt.options.version){
   var pkg = require("../package.json");
   console.log(pkg.version);
-  return 0;
+}
+
+if(opt.options.help){
+  console.log(getopts.getHelp());
 }
 
 // get the project name
-if(opt.argv.length === 0){
+if(!opt.options.version && !opt.options.help && opt.argv.length === 0){
   console.log("Invalid project name.");
   console.log(getopts.getHelp());
   return 1;
+}
+
+if(opt.options.version || opt.options.help){
+  return 0;
 }
 
 var projectPath = opt.argv[0];
@@ -44,6 +53,26 @@ if(temp.length === 1){
   projectName = projectPath;
 }else{
   projectName = temp[temp.length-1];
+}
+
+var valid = validate(projectName);
+if(!valid.validForNewPackages || !valid.validForOldPackages){
+  if(valid.errors){
+    console.log("* Invalid project name:");
+    valid.errors.forEach(function(elm, index, array){
+        console.log('>> ' + elm);
+    });
+    return 1;
+  }
+
+  if(valid.warnings){
+    console.log("* Project name not recommended (To use this name anyway, use the \'-f\' option):");
+    valid.warnings.forEach(function(elm, index, array){
+        console.log('++ ' + elm);
+    });
+
+    if(!opt.options.force) return 0;
+  }
 }
 
 console.log("*** Init process");
@@ -60,67 +89,97 @@ var createRootLevel = function(callback){
   var finalGitignore = path.join(projectPath, ".gitignore");
   var finalEslint = path.join(projectPath, ".eslintrc");
 
-  console.log("* Create project folder");
-  mkdirp(projectPath, 0755, function(err){
-    if(err){ throw err; }
+  async.series([
+      function(cb){
+        fs.access(projectPath, fs.F_OK, function(err){
+            if(err){
+                // project folder not exists. we can continue.
+                return cb(null);
+            }
 
-    // README.md
-    console.log("* Copy README.md");
-    readmeMd = readmeMd.replace(/%projectName%/g, projectName);
-    fs.writeFileSync(finalReadmeMd, readmeMd);
+            if(opt.options.force){
+                // project folder exists, but the user still wants to use this folder... OKAY! :D
+                return cb(null);
+            }
 
-    // index.js
-    console.log("* Copy index.js");
-    fs.writeFileSync(finalIndexJs, indexJs);
+            // project folder exists, and the user not want to use the 'force' option.
+            err = new Error("fs.access.error");
+            return cb(err);
+        });
+      },
 
-    // eslint
-    console.log("* Copy .eslintrc");
-    fs.writeFileSync(finalEslint, eslint)
+      function(cb){
+          console.log("* Create project folder");
+          mkdirp(projectPath, 0755, function(err){
+            if(err){ return cb(new Error("mkdirp.error")); }
 
-    // gitignore
-    if(opt.options.git){
-      console.log("* Copy .gitignore");
-      fs.writeFileSync(finalGitignore, gitignore);
+            // README.md
+            console.log("* Copy README.md");
+            readmeMd = readmeMd.replace(/%projectName%/g, projectName);
+            fs.writeFileSync(finalReadmeMd, readmeMd);
+
+            // index.js
+            console.log("* Copy index.js");
+            fs.writeFileSync(finalIndexJs, indexJs);
+
+            // eslint
+            console.log("* Copy .eslintrc");
+            fs.writeFileSync(finalEslint, eslint)
+
+            // gitignore
+            if(opt.options.git){
+              console.log("* Copy .gitignore");
+              fs.writeFileSync(finalGitignore, gitignore);
+            }
+
+            // package.json
+            console.log("* Create package.json");
+            var pkgJson = {
+              "name": projectName,
+              "version": "0.0.0",
+              "main": "index.js",
+              "scripts": {
+                "pretest": "eslint src test",
+                "test": "NODE_ENV=test lab -M 20000 -v -r console -o stdout -r html -o test/testResults.html --leaks test",
+                "start": "node index.js"
+              },
+              "keywords": [
+                "hapi",
+                "application",
+                "js"
+              ],
+              "author": "",
+              "license": "ISC",
+              "dependencies": {
+                "boom": "^4.2.0",
+                "confidence": "^3.0.2",
+                "debug": "^2.3.2",
+                "glue": "^4.0.0",
+                "good": "^7.0.2",
+                "good-console": "^6.3.1",
+                "hapi": "^15.2.0"
+              },
+              "devDependencies": {
+                "eslint": "^3.10.2",
+                "blipp": "^2.3.0",
+                "code": "^4.0.0",
+                "lab": "^11.2.1"
+              } 
+            };
+            fs.writeFileSync(finalPackageJson, JSON.stringify(pkgJson, null, 2));
+          });
+      }
+  ], function(err, result){
+    if(err){
+      if(err.message === "fs.access.error"){
+          console.log("Directory already exists. If you still want to use this directory, invoke the \'-f\' option.");
+          return callback(err);
+      }
     }
 
-    // package.json
-    console.log("* Create package.json");
-    var pkgJson = {
-      "name": projectName,
-      "version": "0.0.0",
-      "main": "index.js",
-      "scripts": {
-        "pretest": "eslint src test",
-        "test": "NODE_ENV=test lab -M 20000 -v -r console -o stdout -r html -o test/testResults.html --leaks test",
-        "start": "node index.js"
-      },
-      "keywords": [
-        "hapi",
-        "application",
-        "js"
-      ],
-      "author": "",
-      "license": "ISC",
-      "dependencies": {
-        "boom": "^4.2.0",
-        "confidence": "^3.0.2",
-        "debug": "^2.3.2",
-        "glue": "^4.0.0",
-        "good": "^7.0.2",
-        "good-console": "^6.3.1",
-        "hapi": "^15.2.0"
-      },
-      "devDependencies": {
-        "eslint": "^3.10.2",
-        "blipp": "^2.3.0",
-        "code": "^4.0.0",
-        "lab": "^11.2.1"
-      } 
-    };
-    fs.writeFileSync(finalPackageJson, JSON.stringify(pkgJson, null, 2));
-
-    callback();
+    return callback(null);
   });
+
 };
 
 var createSrcLevel = function(callback){
@@ -176,7 +235,9 @@ async.series([
     createSrcLevel,
     createTestLevel
 ], function(err){
-  if(err){ throw err; }
+  if(err){ 
+      return 1;
+  }
   console.log("*** Process finished successfully. To run the project, execute the commands:");
   console.log("*** ")
   console.log("*** $ npm install");

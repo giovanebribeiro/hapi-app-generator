@@ -30,7 +30,8 @@
   "dependencies": {
     "async": "^2.1.2",
     "mkdirp": "^0.5.1",
-    "node-getopt": "^0.2.3"
+    "node-getopt": "^0.2.3",
+    "validate-npm-package-name": "^2.2.2"
   },
   "devDependencies": {
     "assert": "^1.4.1",
