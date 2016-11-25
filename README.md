@@ -1,4 +1,4 @@
-# hapi-generator [![Build Status](https://travis-ci.org/giovanebribeiro/hapi-app-generator.svg?branch=master)](https://travis-ci.org/giovanebribeiro/hapi-app-generator) [![npm version](https://badge.fury.io/js/hapi-app-generator.svg)](https://badge.fury.io/js/hapi-app-generator) [david dm](https://david-dm.org/giovanebribeiro/hapi-app-generator.svg)
+# hapi-generator [![Build Status](https://travis-ci.org/giovanebribeiro/hapi-app-generator.svg?branch=master)](https://travis-ci.org/giovanebribeiro/hapi-app-generator) [![npm version](https://badge.fury.io/js/hapi-app-generator.svg)](https://badge.fury.io/js/hapi-app-generator) [![david dm](https://david-dm.org/giovanebribeiro/hapi-app-generator.svg)](https://david-dm.org)
 
 [![NPM](https://nodei.co/npm/hapi-app-generator.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/hapi-app-generator/)
 
