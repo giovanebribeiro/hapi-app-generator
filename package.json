@@ -11,7 +11,6 @@
     "test": "mocha --bail test/",
     "preversion": "npm test",
     "version": "git add --all && git push --tags && npm publish"
-    
   },
   "repository": {
     "type": "git",

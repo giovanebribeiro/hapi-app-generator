@@ -21,7 +21,7 @@ Usage: hapigen [OPTION] <projectPath>
 <projectPath> is the path to project folder
 ```
 
-Expected result:
+### Example
 ```
 $ hapigen foo
 *** Init process
