@@ -50,7 +50,7 @@ describe('>>> hapi-app-generator tests <<<', function(){
             + '  -g, --git      Add .gitignore\n'
             + '  -h, --help     Display this help\n'
             + '  -v, --version  Show the version\n'
-            + '  -f, --force    Force the execution, even if project name are not recommended, or project folder is non-empty\n'
+            + '  -f, --force    Force the execution, even if project name are not recommended, or project folder exists\n'
             + '\n'
             + '<projectPath> is the path to project folder\n';
           assert.equal(out, temp);
@@ -66,7 +66,7 @@ describe('>>> hapi-app-generator tests <<<', function(){
           + '  -g, --git      Add .gitignore\n'
           + '  -h, --help     Display this help\n'
           + '  -v, --version  Show the version\n'
-          + '  -f, --force    Force the execution, even if project name are not recommended, or project folder is non-empty\n'
+          + '  -f, --force    Force the execution, even if project name are not recommended, or project folder exists\n'
           + '\n'
           + '<projectPath> is the path to project folder\n'
           assert.equal(out, temp);
@@ -91,7 +91,7 @@ describe('>>> hapi-app-generator tests <<<', function(){
           + '  -g, --git      Add .gitignore\n'
           + '  -h, --help     Display this help\n'
           + '  -v, --version  Show the version\n'
-          + '  -f, --force    Force the execution, even if project name are not recommended, or project folder is non-empty\n'
+          + '  -f, --force    Force the execution, even if project name are not recommended, or project folder exists\n'
           + '\n'
           + '<projectPath> is the path to project folder\n';
           assert.equal(out, temp);

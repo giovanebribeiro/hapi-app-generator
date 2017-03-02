@@ -4,32 +4,35 @@
         "node": true
     
   },
-    "extends": "eslint:recommended",
-    "parserOptions": {
-        "sourceType": "module"
-    },
-    "rules": {
-      "indent": [
-            "warn",
-            4
-        
-      ],
-      "linebreak-style": [
-            "off",
-            "unix"
-        
-      ],
-      "quotes": [
-            "warn",
-            "single"
-        
-      ],
-      "semi": [
-            "error",
-            "always"
-        
-      ]
-    
-    }
+  "plugins":[
+    "json"
+  ],
+  "extends": "eslint:recommended",
+  "parserOptions": {
+      "sourceType": "module"
+  },
+  "rules": {
+    "indent": [
+          "warn",
+          4
+      
+    ],
+    "linebreak-style": [
+          "off",
+          "unix"
+      
+    ],
+    "quotes": [
+          "warn",
+          "single"
+      
+    ],
+    "semi": [
+          "error",
+          "always"
+      
+    ]
+  
+  }
 }
 

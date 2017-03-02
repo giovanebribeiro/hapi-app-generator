@@ -16,7 +16,7 @@ Usage: hapigen [OPTION] <projectPath>
   -g, --git      Add .gitignore
   -h, --help     Display this help
   -v, --version  Show the version  
-  -f, --force    Force the execution, even if project name are not recommended, or project folder is non-empty
+  -f, --force    Force the execution, even if project name are not recommended, or project folder exists
 
 <projectPath> is the path to project folder
 ```

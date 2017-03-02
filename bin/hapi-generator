@@ -12,7 +12,7 @@ var getopts = new Getopts([
   ['g', 'git', 'Add .gitignore'],
   ['h', 'help', 'Display this help'],
   ['v', 'version', 'Show the version'],
-  ['f', 'force', 'Force the execution, even if project name are not recommended, or project folder is non-empty']
+  ['f', 'force', 'Force the execution, even if project name are not recommended, or project folder exists']
 ]);
 
 getopts.setHelp(
@@ -163,6 +163,7 @@ var createRootLevel = function(callback){
               },
               "devDependencies": {
                 "eslint": "^3.10.2",
+                "eslint-plugin-json": "^1.2.0",
                 "blipp": "^2.3.0",
                 "code": "^4.0.0",
                 "lab": "^11.2.1"
