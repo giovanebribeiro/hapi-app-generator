@@ -1,6 +1,6 @@
 {
   "name": "hapi-app-generator",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Another Hapi.JS generator",
   "main": "bin/hapi-generator",
   "bin": {
