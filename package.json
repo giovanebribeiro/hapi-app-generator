@@ -9,8 +9,10 @@
   "scripts": {
     "pretest": "eslint bin",
     "test": "mocha --bail test/",
+    "build": "npm version --no-git-tag-version ",
     "preversion": "npm test",
-    "version": "git add --all && git push --tags && npm publish"
+    "version": "git commit -am \"build: release version\" && taglog $npm_package_version",
+    "postversion": "git push --follow-tags && npm publish"
   },
   "repository": {
     "type": "git",
@@ -37,6 +39,7 @@
     "validate-npm-package-name": "^3.0.0"
   },
   "devDependencies": {
+    "@giovanebribeiro/taglog": "0.0.2",
     "assert": "^2.0.0",
     "eslint": "^5.16.0",
     "eslint-plugin-json": "^1.2.0",
