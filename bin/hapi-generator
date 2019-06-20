@@ -1,10 +1,11 @@
 #!/usr/bin/env node
-
-var async = require("async");
-var mkdirp = require("mkdirp");
-var path = require("path");
-var fs = require("fs");
-var Getopts = require("node-getopt");
+/* eslint-disable no-console */
+/* eslint-disable indent */
+var async = require('async');
+var mkdirp = require('mkdirp');
+var path = require('path');
+var fs = require('fs');
+var Getopts = require('node-getopt');
 var validate = require('validate-npm-package-name');
 var debug = require('debug')('hapi-app-generator:bin/hapi-generator');
 
@@ -16,11 +17,11 @@ var getopts = new Getopts([
 ]);
 
 getopts.setHelp(
-  "Usage: hapigen [OPTION] <projectPath>\n" +
-  "\n" +
-  "[[OPTIONS]]\n" +
-  "\n" +
-  "<projectPath> is the path to project folder"
+  'Usage: hapigen [OPTION] <projectPath>\n' +
+  '\n' +
+  '[[OPTIONS]]\n' +
+  '\n' +
+  '<projectPath> is the path to project folder'
   );
 //console.log(opt.argv[0]);
 //return 0;
@@ -28,7 +29,7 @@ getopts.setHelp(
 var opt = getopts.parseSystem();
 
 if(opt.options.version){
-  var pkg = require("../package.json");
+  var pkg = require('../package.json');
   console.log(pkg.version);
 }
 
@@ -38,18 +39,18 @@ if(opt.options.help){
 
 // get the project name
 if(!opt.options.version && !opt.options.help && opt.argv.length === 0){
-  console.log("Invalid project name.");
+  console.log('Invalid project name.');
   console.log(getopts.getHelp());
-  return 1;
+  process.exit(1);
 }
 
 if(opt.options.version || opt.options.help){
-  return 0;
+  process.exit(0);
 }
 
 var projectPath = opt.argv[0];
 var projectName = projectPath;
-var temp = projectPath.split(/[\/\\]/);
+var temp = projectPath.split(/[/\\]/);
 if(temp.length === 1){
   projectName = projectPath;
 }else{
@@ -59,125 +60,125 @@ if(temp.length === 1){
 var valid = validate(projectName);
 if(!valid.validForNewPackages || !valid.validForOldPackages){
   if(valid.errors){
-    console.log("* Invalid project name:");
-    valid.errors.forEach(function(elm, index, array){
+    console.log('* Invalid project name:');
+    valid.errors.forEach(function(elm/*, index, array*/){
         console.log('>> ' + elm);
     });
-    return 1;
+    process.exit(1);
   }
 
   if(valid.warnings){
-    console.log("* Project name not recommended (To use this name anyway, use the \'-f\' option):");
-    valid.warnings.forEach(function(elm, index, array){
+    console.log('* Project name not recommended (To use this name anyway, use the \'-f\' option):');
+    valid.warnings.forEach(function(elm/*, index, array*/){
         console.log('++ ' + elm);
     });
 
-    if(!opt.options.force) return 0;
+    if(!opt.options.force) process.exit(0);
   }
 }
 
-console.log("*** Init process");
+console.log('*** Init process');
 
 // mount root folder
 var createRootLevel = function(callback){
-  var readmeMd = fs.readFileSync(path.join(__dirname, "..", "templates", "md", "README.md"), 'utf-8');
-  var indexJs = fs.readFileSync(path.join(__dirname, "..", "templates", "js", "index.js"), 'utf-8');
-  var gitignore = fs.readFileSync(path.join(__dirname, "..", "templates", "gitignore"), 'utf-8');
-  var eslint = fs.readFileSync(path.join(__dirname, "..", "templates", "eslintrc"), "utf-8");
-  var finalPackageJson = path.join(projectPath, "package.json");
-  var finalReadmeMd = path.join(projectPath, "README.md");
-  var finalIndexJs = path.join(projectPath, "index.js");
-  var finalGitignore = path.join(projectPath, ".gitignore");
-  var finalEslint = path.join(projectPath, ".eslintrc");
+  var readmeMd = fs.readFileSync(path.join(__dirname, '..', 'templates', 'md', 'README.md'), 'utf-8');
+  var indexJs = fs.readFileSync(path.join(__dirname, '..', 'templates', 'js', 'index.js'), 'utf-8');
+  var gitignore = fs.readFileSync(path.join(__dirname, '..', 'templates', 'gitignore'), 'utf-8');
+  var eslint = fs.readFileSync(path.join(__dirname, '..', 'templates', 'eslintrc'), 'utf-8');
+  var finalPackageJson = path.join(projectPath, 'package.json');
+  var finalReadmeMd = path.join(projectPath, 'README.md');
+  var finalIndexJs = path.join(projectPath, 'index.js');
+  var finalGitignore = path.join(projectPath, '.gitignore');
+  var finalEslint = path.join(projectPath, '.eslintrc');
 
   async.series([
       function(cb){
-        console.log("* Check if folder is available");
+        console.log('* Check if folder is available');
         fs.access(projectPath, fs.F_OK, function(err){
             if(err){
-                debug("project folder not exists, we can continue");
+                debug('project folder not exists, we can continue');
                 return cb(null);
             }
 
             if(opt.options.force){
-                debug("project folder exists, but the user still wants to use this folder... OKAY! :D");
+                debug('project folder exists, but the user still wants to use this folder... OKAY! :D');
                 return cb(null);
             }
 
-            debug("project folder exists, and the user not want to use the 'force' option.");
-            err = new Error("fs.access.error");
+            debug('project folder exists, and the user not want to use the \'force\' option.');
+            err = new Error('fs.access.error');
             return cb(err);
         });
       },
 
       function(cb){
-          console.log("* Create project folder");
-          mkdirp(projectPath, 0755, function(err){
-            if(err){ return cb(new Error("mkdirp.error")); }
+          console.log('* Create project folder');
+          mkdirp(projectPath, 0o755, function(err){
+            if(err){ return cb(new Error('mkdirp.error')); }
 
             // README.md
-            console.log("* Copy README.md");
+            console.log('* Copy README.md');
             readmeMd = readmeMd.replace(/%projectName%/g, projectName);
             fs.writeFileSync(finalReadmeMd, readmeMd);
 
             // index.js
-            console.log("* Copy index.js");
+            console.log('* Copy index.js');
             fs.writeFileSync(finalIndexJs, indexJs);
 
             // eslint
-            console.log("* Copy .eslintrc");
-            fs.writeFileSync(finalEslint, eslint)
+            console.log('* Copy .eslintrc');
+            fs.writeFileSync(finalEslint, eslint);
 
             // gitignore
             if(opt.options.git){
-              console.log("* Copy .gitignore");
+              console.log('* Copy .gitignore');
               fs.writeFileSync(finalGitignore, gitignore);
             }
 
             // package.json
-            console.log("* Create package.json");
+            console.log('* Create package.json');
             var pkgJson = {
-              "name": projectName,
-              "version": "0.0.0",
-              "main": "index.js",
-              "scripts": {
-                "pretest": "eslint src test",
-                "test": "NODE_ENV=test lab -M 20000 -v -r console -o stdout -r html -o test/testResults.html --leaks test",
-                "start": "node index.js"
+              'name': projectName,
+              'version': '0.0.0',
+              'main': 'index.js',
+              'scripts': {
+                'pretest': 'eslint src test',
+                'test': 'NODE_ENV=test lab -M 20000 -v -r console -o stdout -r html -o test/testResults.html --leaks test',
+                'start': 'node index.js'
               },
-              "keywords": [
-                "hapi",
-                "application",
-                "js"
+              'keywords': [
+                'hapi',
+                'application',
+                'js'
               ],
-              "author": "",
-              "license": "ISC",
-              "dependencies": {
-                "boom": "^4.2.0",
-                "confidence": "^3.0.2",
-                "debug": "^2.3.2",
-                "glue": "^4.0.0",
-                "good": "^7.0.2",
-                "good-console": "^6.3.1",
-                "hapi": "^15.2.0"
+              'author': '',
+              'license': 'ISC',
+              'dependencies': {
+                'boom': '^4.2.0',
+                'confidence': '^3.0.2',
+                'debug': '^2.3.2',
+                'glue': '^4.0.0',
+                'good': '^7.0.2',
+                'good-console': '^6.3.1',
+                'hapi': '^15.2.0'
               },
-              "devDependencies": {
-                "eslint": "^3.10.2",
-                "eslint-plugin-json": "^1.2.0",
-                "blipp": "^2.3.0",
-                "code": "^4.0.0",
-                "lab": "^11.2.1"
+              'devDependencies': {
+                'eslint': '^3.10.2',
+                'eslint-plugin-json': '^1.2.0',
+                'blipp': '^2.3.0',
+                'code': '^4.0.0',
+                'lab': '^11.2.1'
               } 
             };
             fs.writeFileSync(finalPackageJson, JSON.stringify(pkgJson, null, 2));
             return cb(null);
           });
       }
-  ], function(err, result){
+  ], function(err/*, result*/){
     if(err){
-      debug("Error object:", JSON.stringify(err));
-      if(err.message === "fs.access.error"){
-          console.log("+ Directory already exists. If you still want to use this directory, invoke the \'-f\' option.");
+      debug('Error object:', JSON.stringify(err));
+      if(err.message === 'fs.access.error'){
+          console.log('+ Directory already exists. If you still want to use this directory, invoke the \'-f\' option.');
           return callback(err);
       }
     }
@@ -188,32 +189,32 @@ var createRootLevel = function(callback){
 };
 
 var createSrcLevel = function(callback){
-  var moduleHelloActionJs = fs.readFileSync(path.join(__dirname, "..", "templates", "js", "hello.action.js"), 'utf-8');
-  var moduleHelloPluginJs = fs.readFileSync(path.join(__dirname, "..", "templates", "js", "hello.plugin.js"), 'utf-8');
-  var manifestJson = fs.readFileSync(path.join(__dirname, "..", "templates", "json", "manifest.json"), 'utf-8');
-  var finalSrcStructure = path.join(projectPath, "src", "modules", "hello", "actions");
-  var finalManifestJson = path.join(projectPath, "src", "manifest.json");
-  var finalModuleHelloPluginJs = path.join(projectPath, "src", "modules", "hello", "index.js");
-  var finalModuleHelloActionJs = path.join(finalSrcStructure, "hello.js");
+  var moduleHelloActionJs = fs.readFileSync(path.join(__dirname, '..', 'templates', 'js', 'hello.action.js'), 'utf-8');
+  var moduleHelloPluginJs = fs.readFileSync(path.join(__dirname, '..', 'templates', 'js', 'hello.plugin.js'), 'utf-8');
+  var manifestJson = fs.readFileSync(path.join(__dirname, '..', 'templates', 'json', 'manifest.json'), 'utf-8');
+  var finalSrcStructure = path.join(projectPath, 'src', 'modules', 'hello', 'actions');
+  var finalManifestJson = path.join(projectPath, 'src', 'manifest.json');
+  var finalModuleHelloPluginJs = path.join(projectPath, 'src', 'modules', 'hello', 'index.js');
+  var finalModuleHelloActionJs = path.join(finalSrcStructure, 'hello.js');
  
-  console.log("* Create 'src' folder structure");
-  mkdirp(finalSrcStructure, 0755, function(err){
+  console.log('* Create \'src\' folder structure');
+  mkdirp(finalSrcStructure, 0o755, function(err){
     if(err){ 
         var aux = err.message;
-        err.message = "mkdirp.error - "+aux;
-        return callback(error);
+        err.message = 'mkdirp.error - '+aux;
+        return callback(err);
     }
 
     //manifest.json
-    console.log("* Copy src/manifest.json");
+    console.log('* Copy src/manifest.json');
     fs.writeFileSync(finalManifestJson, manifestJson);
 
     // hello module: index.js
-    console.log("* Copy src/modules/hello/index.js");
+    console.log('* Copy src/modules/hello/index.js');
     fs.writeFileSync(finalModuleHelloPluginJs, moduleHelloPluginJs);
 
     // hello module: action hello
-    console.log("* Copy src/modules/hello/actions/hello.js");
+    console.log('* Copy src/modules/hello/actions/hello.js');
     fs.writeFileSync(finalModuleHelloActionJs, moduleHelloActionJs);
     
     callback(null);
@@ -221,20 +222,20 @@ var createSrcLevel = function(callback){
 };
 
 var createTestLevel = function(callback){
-  var testHelloJs = fs.readFileSync(path.join(__dirname, "..", "templates", "js", "hello.test.js"), 'utf-8');
-  var finalTestStructure = path.join(projectPath, "test");
-  var finalTestHelloJs = path.join(finalTestStructure, "hello.test.js");
+  var testHelloJs = fs.readFileSync(path.join(__dirname, '..', 'templates', 'js', 'hello.test.js'), 'utf-8');
+  var finalTestStructure = path.join(projectPath, 'test');
+  var finalTestHelloJs = path.join(finalTestStructure, 'hello.test.js');
 
-  console.log("* Create 'test' folder");
-  mkdirp(finalTestStructure, 0755, function(err){
+  console.log('* Create \'test\' folder');
+  mkdirp(finalTestStructure, 0o755, function(err){
     if(err){ 
       var aux = err.message;
-      err.message = "mkdirp.error - "+aux;
+      err.message = 'mkdirp.error - '+aux;
       return callback(err);
     }
 
     // test file
-    console.log("* Copy test/hello.test.js");
+    console.log('* Copy test/hello.test.js');
     fs.writeFileSync(finalTestHelloJs, testHelloJs);
 
     callback(null);
@@ -248,21 +249,21 @@ async.series([
     createTestLevel
 ], function(err){
   if(err){ 
-      return 1;
+      process.exit(1);
   }
-  console.log("Process finished successfully. To run the project, execute the commands:");
-  console.log("");
-  console.log("$ cd "+projectName);
-  console.log("$ npm install");
-  console.log("$ npm start");
-  console.log("");
-  console.log("This project have the 'debug' module. To activate:");
-  console.log("");
-  console.log("$ DEBUG="+projectName+":* npm start");
-  console.log("");
-  console.log("This project also have tests (with eslint). To run:");
-  console.log("");
-  console.log("$ npm test");
+  console.log('Process finished successfully. To run the project, execute the commands:');
+  console.log('');
+  console.log('$ cd '+projectName);
+  console.log('$ npm install');
+  console.log('$ npm start');
+  console.log('');
+  console.log('This project have the \'debug\' module. To activate:');
+  console.log('');
+  console.log('$ DEBUG='+projectName+':* npm start');
+  console.log('');
+  console.log('This project also have tests (with eslint). To run:');
+  console.log('');
+  console.log('$ npm test');
 
-  return 0;
+  process.exit(0);
 });

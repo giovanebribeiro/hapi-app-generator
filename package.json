@@ -7,7 +7,7 @@
     "hapigen": "./bin/hapi-generator"
   },
   "scripts": {
-    "pretest": "eslint bin",
+    "pretest": "eslint ./bin/*",
     "test": "mocha --bail test/",
     "build": "npm version --no-git-tag-version ",
     "preversion": "npm test",
